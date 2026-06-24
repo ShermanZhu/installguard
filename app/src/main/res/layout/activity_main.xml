@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="安装守护"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="拦截所有应用安装行为，安装前需输入密码"
+            android:textSize="14sp"
+            android:textColor="#888888"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="● 守护状态：检测中..."
+            android:textSize="16sp"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置密码（安装时需输入此密码）"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/etSetPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberPassword"
+            android:hint="输入4-6位数字密码"
+            android:padding="12dp"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnSavePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存密码"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnEnableService"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="开启守护服务（无障碍）"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnTestLock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="立即锁定（测试用）" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="使用说明：\n\n1. 设置并保存密码\n2. 点击「开启守护服务」\n3. 在系统无障碍设置中找到「安装守护」并开启\n4. 之后每次安装应用都会弹出密码框\n5. 密码验证后5分钟内可继续安装\n6. 默认密码：123456（请及时修改）"
+            android:textSize="13sp"
+            android:textColor="#999999"
+            android:lineSpacingExtra="4dp" />
+
+    </LinearLayout>
+</ScrollView>
