@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">安装守护</string>
+    <string name="service_name">安装守护服务</string>
+    <string name="service_desc">监控并拦截应用安装行为，安装前需要密码验证。用于防止老人或儿童误装软件。</string>
+</resources>
