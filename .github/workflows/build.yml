@@ -29,11 +29,17 @@ jobs:
 
     - name: Download Gradle Wrapper JAR
       run: |
-        curl -sL https://raw.githubusercontent.com/gradle/gradle/v7.5.1/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar
+        curl -sL "https://github.com/gradle/gradle/raw/v7.5.1/gradle/wrapper/gradle-wrapper.jar" -o gradle/wrapper/gradle-wrapper.jar
+        if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+          curl -sL "https://services.gradle.org/distributions/gradle-7.5.1-bin.zip" -o /tmp/gradle.zip
+          unzip -j /tmp/gradle.zip "gradle-7.5.1/lib/gradle-wrapper-*.jar" -d /tmp/
+          find /tmp -name "*.jar" -path "*wrapper*" -exec cp {} gradle/wrapper/gradle-wrapper.jar \;
+        fi
         chmod +x gradlew
+        ls -la gradle/wrapper/
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon
+      run: ./gradlew assembleDebug --no-daemon --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
