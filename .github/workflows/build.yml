@@ -27,16 +27,15 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
-    - name: Download Gradle Wrapper JAR
+    - name: Download Gradle Wrapper JAR and create gradlew
       run: |
         curl -sL "https://github.com/gradle/gradle/raw/v7.5.1/gradle/wrapper/gradle-wrapper.jar" -o gradle/wrapper/gradle-wrapper.jar
-        if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-          curl -sL "https://services.gradle.org/distributions/gradle-7.5.1-bin.zip" -o /tmp/gradle.zip
-          unzip -j /tmp/gradle.zip "gradle-7.5.1/lib/gradle-wrapper-*.jar" -d /tmp/
-          find /tmp -name "*.jar" -path "*wrapper*" -exec cp {} gradle/wrapper/gradle-wrapper.jar \;
-        fi
+        cat > gradlew << 'GRADLEW_EOF'
+        #!/bin/sh
+        exec java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain "$@"
+        GRADLEW_EOF
         chmod +x gradlew
-        ls -la gradle/wrapper/
+        ls -la gradlew gradle/wrapper/gradle-wrapper.jar
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug --no-daemon --stacktrace
