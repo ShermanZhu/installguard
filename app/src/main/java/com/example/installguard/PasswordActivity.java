@@ -18,12 +18,10 @@ public class PasswordActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password);
-
         etPassword = findViewById(R.id.etPassword);
         tvHint = findViewById(R.id.tvHint);
         Button btnConfirm = findViewById(R.id.btnConfirm);
         Button btnCancel = findViewById(R.id.btnCancel);
-
         final String savedPwd = PasswordManager.getPassword(this);
 
         btnConfirm.setOnClickListener(new View.OnClickListener() {
@@ -32,15 +30,15 @@ public class PasswordActivity extends Activity {
                 String input = etPassword.getText().toString();
                 if (input.equals(savedPwd)) {
                     GuardState.unlock();
-                    Toast.makeText(PasswordActivity.this, "验证通过，可继续安装", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PasswordActivity.this, "验证通过", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     errorCount++;
-                    tvHint.setText("密码错误，请重试（已错 " + errorCount + " 次）");
+                    tvHint.setText("密码错误，已错 " + errorCount + " 次");
                     etPassword.setText("");
                     if (errorCount >= 3) {
-                        Toast.makeText(PasswordActivity.this, "错误次数过多，已取消安装", Toast.LENGTH_LONG).show();
                         GuardState.lock();
+                        GuardState.setCooldown();
                         finish();
                     }
                 }
@@ -51,6 +49,7 @@ public class PasswordActivity extends Activity {
             @Override
             public void onClick(View v) {
                 GuardState.lock();
+                GuardState.setCooldown();
                 finish();
             }
         });
