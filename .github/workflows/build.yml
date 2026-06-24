@@ -27,11 +27,10 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
-    - name: Generate Gradle Wrapper
-      run: gradle wrapper --gradle-version 7.5.1 --distribution-type bin
-
-    - name: Make gradlew executable
-      run: chmod +x gradlew
+    - name: Download Gradle Wrapper JAR
+      run: |
+        curl -sL https://raw.githubusercontent.com/gradle/gradle/v7.5.1/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar
+        chmod +x gradlew
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug --no-daemon
