@@ -3,6 +3,7 @@ package com.example.installguard;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Intent;
+import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -22,7 +23,11 @@ public class InstallGuardService extends AccessibilityService {
         "com.tencent.android.appstore",
         "com.wandoujia",
         "com.baidu.appsearch",
-        "com.qihoo.appstore"
+        "com.qihoo.appstore",
+        "com.meizu.mstore",
+        "com.huawei.appmarket",
+        "com.oppo.market",
+        "com.bbk.appstore"
     };
 
     @Override
@@ -31,12 +36,14 @@ public class InstallGuardService extends AccessibilityService {
         if (event.getEventType() != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return;
 
         String packageName = String.valueOf(event.getPackageName());
-        if (packageName == null) return;
+        if (packageName == null || packageName.isEmpty()) return;
 
         for (String pkg : APP_STORE_PACKAGES) {
             if (packageName.equals(pkg)) {
                 if (GuardState.isUnlocked()) return;
                 performGlobalAction(GLOBAL_ACTION_BACK);
+                performGlobalAction(GLOBAL_ACTION_BACK);
+                performGlobalAction(GLOBAL_ACTION_HOME);
                 GuardState.setCooldown();
                 return;
             }
@@ -61,7 +68,7 @@ public class InstallGuardService extends AccessibilityService {
         CharSequence text = node.getText();
         if (text != null) {
             String s = text.toString().toLowerCase();
-            if (s.equals("取消") || s.equals("cancel") || s.equals("拒绝") || s.equals("denied")) {
+            if (s.equals("取消") || s.equals("cancel") || s.equals("拒绝") || s.equals("denied") || s.equals("deny") || s.equals("close")) {
                 node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 return;
             }
@@ -77,11 +84,29 @@ public class InstallGuardService extends AccessibilityService {
         AccessibilityServiceInfo info = new AccessibilityServiceInfo();
         info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
         info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-        info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS | AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS;
-        info.notificationTimeout = 500;
+        info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
+                | AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+                | AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
+        info.notificationTimeout = 300;
         setServiceInfo(info);
     }
 
     @Override
+    public boolean onUnbind(Intent intent) {
+        return true;
+    }
+
+    @Override
     public void onInterrupt() {}
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Intent restart = new Intent(this, InstallGuardService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(restart);
+        } else {
+            startService(restart);
+        }
+        super.onTaskRemoved(rootIntent);
+    }
 }

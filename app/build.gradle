@@ -10,14 +10,33 @@ android {
         applicationId "com.example.installguard"
         minSdk 21
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "2.1"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("installguard.keystore")
+            storePassword "installguard2026"
+            keyAlias "installguard"
+            keyPassword "installguard2026"
+        }
+        debug {
+            storeFile file("installguard.keystore")
+            storePassword "installguard2026"
+            keyAlias "installguard"
+            keyPassword "installguard2026"
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 
