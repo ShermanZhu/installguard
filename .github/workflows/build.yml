@@ -2,7 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -27,22 +27,32 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
+    - name: Generate Keystore
+      run: |
+        keytool -genkeypair -v \
+          -keystore app/installguard.keystore \
+          -alias installguard \
+          -keyalg RSA -keysize 2048 \
+          -validity 10000 \
+          -storepass installguard2026 \
+          -keypass installguard2026 \
+          -dname "CN=InstallGuard, OU=App, O=OpenSource, L=Shenzhen, ST=Guangdong, C=CN"
+
     - name: Download Gradle Wrapper JAR and create gradlew
       run: |
         curl -sL "https://github.com/gradle/gradle/raw/v7.5.1/gradle/wrapper/gradle-wrapper.jar" -o gradle/wrapper/gradle-wrapper.jar
-        cat > gradlew << 'GRADLEW_EOF'
+        cat > gradlew << 'EOF'
         #!/bin/sh
         exec java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain "$@"
-        GRADLEW_EOF
+        EOF
         chmod +x gradlew
-        ls -la gradlew gradle/wrapper/gradle-wrapper.jar
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon --stacktrace
+    - name: Build Release APK
+      run: ./gradlew assembleRelease --no-daemon
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: InstallGuard-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 30
+        name: InstallGuard-v2.1-apk
+        path: app/build/outputs/apk/release/app-release.apk
+        retention-days: 90
